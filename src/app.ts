@@ -1,16 +1,23 @@
 import express from "express";
 import cors from "cors";
 import authorRouter from "./routes/authors";
+import MessageRouter from "./routes/getmsg";
 
 
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(
+    '*',
+    cors({
+      origin: 'http://localhost:5173', 
+      methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    })
+  );
 
-// Apply routes
+
 app.use("/author", authorRouter);
-app.use("/", (req:any, res:any) => res.send("Hello World!"));
+app.use('/getmessages' , MessageRouter)
 
-// WebSocket setup
 export default app;

@@ -3,7 +3,6 @@ import express from "express"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { Signupinput,Signinput } from "../zod/zods";
-import { sign } from "crypto";
 
 
 
@@ -56,7 +55,7 @@ authorRouter.post("/login", async(req: any, res:any) => {
         return res.status(401).json("you password did not match")
     }
 
-    const jwt_token = await jwt.sign({id : user?.id}, process.env.SECRETE_KEY as string)
+    const jwt_token = jwt.sign({id : user?.id}, process.env.SECRETE_KEY as string)
     console.log(jwt_token)
 
     return res.status(200).json({
@@ -72,3 +71,17 @@ authorRouter.post("/login", async(req: any, res:any) => {
 
 export default authorRouter;
 
+authorRouter.get("/users", async (req, res) => {
+    try {
+      const users = await prisma.user.findMany({
+        select: {
+          id: true,
+          username: true,
+        },
+      });
+      res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+  

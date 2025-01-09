@@ -12,33 +12,23 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 model User {
-  id        Int       @id @default(autoincrement())
-  username  String    @unique
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  messages  Message[] 
-  chats     Chat[]   
-}
-
-model Chat {
-  id        Int       @id @default(autoincrement()) 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  messages  Message[] 
-  userId    Int       
-  user      User      @relation(fields: [userId], references: [id]) 
+  id          Int        @id @default(autoincrement())
+  username    String     @unique
+  email       String     @unique
+  password    String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  sentMessages Message[] @relation("SentMessages") 
+  receivedMessages Message[] @relation("ReceivedMessages") 
 }
 
 model Message {
-  id        Int       @id @default(autoincrement()) 
-  content   String
-  createdAt DateTime  @default(now())
-  userId    Int     
-  chatId    Int     
-  user      User      @relation(fields: [userId], references: [id]) 
-  chat      Chat      @relation(fields: [chatId], references: [id]) 
+  id          Int      @id @default(autoincrement())
+  content     String
+  createdAt   DateTime @default(now())
+  senderId    Int      
+  receiverId  Int     
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver    User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
 }
